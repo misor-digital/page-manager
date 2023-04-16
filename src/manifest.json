@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Page Manager",
   "version": "1.0",
-  "description": "Chrome extension that opens, reload and inserts a picture into the open page on each reload",
+  "description": "Chrome extension that opens, reloads and inserts a picture into the open page on each reload",
   "author": "Nikola Angelov",
   "icons": {
     "16": "icons/icon-16.png",

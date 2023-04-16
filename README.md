@@ -1,5 +1,5 @@
 # page-manager
-Chrome extension that opens, reload and inserts a picture into the open page on each reload.
+Chrome extension that opens, reloads and inserts a picture into the open page on each reload.
 
 1. Make a chrome browser extension which
     1. Opens a page (by URL)
@@ -10,7 +10,7 @@ Chrome extension that opens, reload and inserts a picture into the open page on 
     6. Shows Last refresh / Next refresh
     7. After each page reload
         1. Fetch a random image from an API
-        2. Insert it on the page, cantered, in a dialog box
+        2. Insert it on the page, centered, in a dialog box
 2. React, vanilla JS or other frameworks (Grommet)
 3. Babel
 4. Webpack
