@@ -5,12 +5,14 @@
     "prettier/prettier": [
       "error",
       {
-        "endOfLine": "auto"
+        "endOfLine": "auto",
+        "singleQuote": true
       }
     ]
   },
   "parserOptions": {
-      "ecmaVersion": "latest"
+      "ecmaVersion": "latest",
+      "sourceType": "module"
   },
   "env": {
     "es6": true
