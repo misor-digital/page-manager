@@ -30,12 +30,6 @@ const alarmEventListener = function (tab, alarmName, alarm) {
   }
 };
 
-const removeAlarmOnClosed = (curTabId, alarmName, tabIdWithAlarm) => {
-  if (curTabId === tabIdWithAlarm) {
-    chrome.alarms.clear(alarmName);
-  }
-};
-
 chrome.action.onClicked.addListener(
   handleActionClick.bind(null, url, genericAlarmName, interval)
 );
