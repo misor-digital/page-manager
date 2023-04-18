@@ -25,7 +25,7 @@
     "type": "module"
   },
   "host_permissions": [
-    "https://developer.chrome.com/*"
+    "<all_urls>"
   ],
   "permissions": [
     "alarms",

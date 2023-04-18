@@ -5,7 +5,6 @@ const __initial_data__ = {
 };
 
 let currentTabId;
-let bgPort;
 let alarmScheduledTime;
 
 (function setDefaultValues(initialData) {
@@ -15,20 +14,23 @@ let alarmScheduledTime;
   chrome.storage.session.set({ state: null });
 })(__initial_data__);
 
-chrome.runtime.onConnect.addListener((port) => {
-  console.assert(port.name === 'page-manager');
-  bgPort = port;
-  port.onMessage.addListener(async (msg) => {
-    if (msg.info === 'open') {
+chrome.runtime.onMessage.addListener(async (req, sendRes) => {
+  switch (req.msg?.info) {
+    case 'open':
       handleOpenPage(__initial_data__);
-    } else if (msg.info === 'start') {
+      break;
+    case 'start':
       handleStartPageReload(__initial_data__, currentTabId);
-    } else if (msg.info === 'stop') {
+      break;
+    case 'stop':
       handleStopPageReload(currentTabId);
-    } else if (msg.info === 'scheduled-time') {
+      break;
+    case 'scheduled-time':
       handleScheduledTime();
-    }
-  });
+      break;
+    default:
+      return;
+  }
 });
 
 async function handleOpenPage(initialData) {
@@ -46,10 +48,10 @@ async function handleOpenPage(initialData) {
 
   chrome.tabs.onRemoved.addListener((tabId, removedInfo) => {
     removeAlarm(tabId);
-    handleStopPageReload(tabId);
+    handleResetPageReload(tabId);
   });
 
-  bgPort.postMessage({ info: 'started' });
+  sendMessage({ info: 'started' });
 
   chrome.storage.session.set({ state: 'started' });
 }
@@ -60,7 +62,7 @@ async function handleStartPageReload(initialData, tabId) {
   const alarmName = await createAlarm(initialData.alarmName, tabId, int);
   subscribeForAlarm(alarmName, tabId);
 
-  bgPort.postMessage({ info: 'started' });
+  sendMessage({ info: 'started' });
 
   chrome.storage.session.set({ state: 'started' });
 }
@@ -68,7 +70,7 @@ async function handleStartPageReload(initialData, tabId) {
 async function handleStopPageReload(tabId) {
   removeAlarm(tabId);
 
-  bgPort.postMessage({ info: 'stopped' });
+  sendMessage({ info: 'stopped' });
 
   chrome.storage.session.set({ state: 'stopped' });
 }
@@ -88,7 +90,7 @@ async function subscribeForAlarm(alarmName, tabId) {
 
   setScheduledTime(alarm.scheduledTime);
 
-  handleScheduledTime();
+  // handleScheduledTime();
 
   await chrome.alarms.onAlarm.addListener(
     handleAlarm.bind(alarm, tabId, alarmName)
@@ -121,6 +123,14 @@ const setScheduledTime = (scheduledTime) => {
   alarmScheduledTime = new Date(scheduledTime).toTimeString();
 };
 
+const handleResetPageReload = () => {
+  chrome.storage.session.set({ state: null });
+};
+
 const handleScheduledTime = () => {
-  bgPort.postMessage({ info: 'alarm-schedule', data: alarmScheduledTime });
+  sendMessage({ info: 'alarm-schedule', data: alarmScheduledTime });
+};
+
+const sendMessage = async (msg) => {
+  const res = await chrome.runtime.sendMessage({ msg });
 };
