@@ -1,0 +1,7 @@
+body {
+  width: 20rem;
+}
+
+form#user-preferences {
+  width: 100%;
+}
