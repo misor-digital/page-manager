@@ -62,22 +62,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     next = '-';
   }
 
-  function assignFields() {
-    fields.input.url = document.getElementById('url');
-    fields.input.interval = document.getElementById('interval');
-
-    fields.button.open = document.querySelector('#open-url');
-    fields.button.start = document.querySelector('#start');
-    fields.button.stop = document.querySelector('#stop');
-
-    fields.paragraph.prev = document.querySelector('#prev');
-    fields.paragraph.next = document.querySelector('#next');
-  }
-
   async function initPopup() {
     await initData();
 
-    // Check local storage for saved values or load app defaults
     fields.input.url.value = popupData.url;
     fields.input.interval.value = popupData.int * 60;
 
@@ -103,6 +90,18 @@ window.addEventListener('DOMContentLoaded', async () => {
       fields.button.start.disabled = false;
       fields.button.stop.disabled = true;
     }
+  }
+
+  function assignFields() {
+    fields.input.url = document.getElementById('url');
+    fields.input.interval = document.getElementById('interval');
+
+    fields.button.open = document.querySelector('#open-url');
+    fields.button.start = document.querySelector('#start');
+    fields.button.stop = document.querySelector('#stop');
+
+    fields.paragraph.prev = document.querySelector('#prev');
+    fields.paragraph.next = document.querySelector('#next');
   }
 
   const handleStarted = () => {
@@ -138,14 +137,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     fields.paragraph.next.innerText = next;
   };
 
-  const sendMessage = async (msg) => {
-    const res = await chrome.runtime.sendMessage({ msg });
-  };
-
   const sanitizeInput = (input) => {
     return input
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/"/g, '&quot;');
-  }
+  };
+
+  const sendMessage = (msg) => {
+    const res = chrome.runtime.sendMessage({ msg });
+  };
 });

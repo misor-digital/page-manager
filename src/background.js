@@ -8,7 +8,7 @@ let currentTabId;
 let alarmScheduledTime;
 
 (function setDefaultValues(initialData) {
-  // Check local storage for saved values or load app defaults
+  // Check local storage for saved values in session storage
   chrome.storage.session.set({ url: initialData.url });
   chrome.storage.session.set({ int: initialData.int });
   chrome.storage.session.set({ state: null });
@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener(async (req, sendRes) => {
   }
 });
 
-async function handleOpenPage(initialData) {
+const handleOpenPage = async (initialData) => {
   const url =
     (await chrome.storage.session.get(['url'])).url || initialData.url;
   const int =
@@ -54,9 +54,9 @@ async function handleOpenPage(initialData) {
   sendMessage({ info: 'started' });
 
   chrome.storage.session.set({ state: 'started' });
-}
+};
 
-async function handleStartPageReload(initialData, tabId) {
+const handleStartPageReload = async (initialData, tabId) => {
   const int =
     (await chrome.storage.session.get(['int'])).int || initialData.int;
   const alarmName = await createAlarm(initialData.alarmName, tabId, int);
@@ -65,17 +65,17 @@ async function handleStartPageReload(initialData, tabId) {
   sendMessage({ info: 'started' });
 
   chrome.storage.session.set({ state: 'started' });
-}
+};
 
-async function handleStopPageReload(tabId) {
+const handleStopPageReload = async (tabId) => {
   removeAlarm(tabId);
 
   sendMessage({ info: 'stopped' });
 
   chrome.storage.session.set({ state: 'stopped' });
-}
+};
 
-async function createAlarm(alarmName, tabId, interval) {
+const createAlarm = async (alarmName, tabId, interval) => {
   const currentTabAlarmName = `${alarmName}${tabId}`;
 
   const alarmInfo = { periodInMinutes: interval };
@@ -83,23 +83,21 @@ async function createAlarm(alarmName, tabId, interval) {
   await chrome.alarms.create(currentTabAlarmName, alarmInfo);
 
   return currentTabAlarmName;
-}
+};
 
-async function subscribeForAlarm(alarmName, tabId) {
+const subscribeForAlarm = async (alarmName, tabId) => {
   const alarm = await chrome.alarms.get(alarmName);
 
   setScheduledTime(alarm.scheduledTime);
 
-  // handleScheduledTime();
-
   await chrome.alarms.onAlarm.addListener(
     handleAlarm.bind(alarm, tabId, alarmName)
   );
-}
+};
 
-async function removeAlarm(tabId) {
+const removeAlarm = async (tabId) => {
   await chrome.alarms.clear(`${__initial_data__.alarmName}${tabId}`);
-}
+};
 
 const handleAlarm = (tabId, alarmName, alarm) => {
   if (alarm.name === alarmName) {
@@ -123,14 +121,16 @@ const setScheduledTime = (scheduledTime) => {
   alarmScheduledTime = new Date(scheduledTime).toTimeString();
 };
 
-const handleResetPageReload = () => {
-  chrome.storage.session.set({ state: null });
+const handleResetPageReload = (tabId) => {
+  if (tabId === currentTabId) {
+    chrome.storage.session.set({ state: null });
+  }
 };
 
 const handleScheduledTime = () => {
   sendMessage({ info: 'alarm-schedule', data: alarmScheduledTime });
 };
 
-const sendMessage = async (msg) => {
-  const res = await chrome.runtime.sendMessage({ msg });
+const sendMessage = (msg) => {
+  chrome.runtime.sendMessage({ msg }).then().catch(console.error);
 };

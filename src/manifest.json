@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Page Manager",
+  "name": "[DEV] Page Manager",
   "version": "1.0",
   "description": "Chrome extension that opens, reloads and inserts a picture into the open page on each reload",
   "author": "misor.digital@gmail.com",
