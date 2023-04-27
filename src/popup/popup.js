@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     chrome.storage.session.set({ int: int / 60 });
 
     sendMessage({ info: 'open' });
-    sendMessage({ info: 'scheduled-time' });
+    // sendMessage({ info: 'scheduled-time' });
   });
 
   fields.button.start.addEventListener('click', async () => {
@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     chrome.storage.session.set({ int: int / 60 });
 
     sendMessage({ info: 'start' });
-    sendMessage({ info: 'scheduled-time' });
+    // sendMessage({ info: 'scheduled-time' });
   });
 
   fields.button.stop.addEventListener('click', async () => {
@@ -131,7 +131,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   const handleScheduledTime = (msg) => {
     prev = next;
-    next = msg.data;
+    next = msg.data || '-';
 
     fields.paragraph.prev.innerText = prev;
     fields.paragraph.next.innerText = next;

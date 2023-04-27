@@ -25,9 +25,9 @@ chrome.runtime.onMessage.addListener(async (req, sendRes) => {
     case 'stop':
       handleStopPageReload(currentTabId);
       break;
-    case 'scheduled-time':
-      handleScheduledTime();
-      break;
+    // case 'scheduled-time':
+    //   handleScheduledTime();
+    //   break;
     default:
       return;
   }
@@ -67,16 +67,19 @@ const handleStartPageReload = async (initialData, tabId) => {
   chrome.storage.session.set({ state: 'started' });
 };
 
-const handleStopPageReload = async (tabId) => {
+const handleStopPageReload = (tabId) => {
   removeAlarm(tabId);
 
   sendMessage({ info: 'stopped' });
 
   chrome.storage.session.set({ state: 'stopped' });
+
+  alarmScheduledTime = undefined;
 };
 
 const createAlarm = async (alarmName, tabId, interval) => {
-  const currentTabAlarmName = `${alarmName}${tabId}`;
+  // const currentTabAlarmName = `${alarmName}${tabId}`;
+  const currentTabAlarmName = `${alarmName}${tabId}; ID: ${Math.random()}`;
 
   const alarmInfo = { periodInMinutes: interval };
 
@@ -95,8 +98,9 @@ const subscribeForAlarm = async (alarmName, tabId) => {
   );
 };
 
-const removeAlarm = async (tabId) => {
-  await chrome.alarms.clear(`${__initial_data__.alarmName}${tabId}`);
+const removeAlarm = (tabId) => {
+  // chrome.alarms.clear(`${__initial_data__.alarmName}${tabId}`);
+  chrome.alarms.clearAll();
 };
 
 const handleAlarm = (tabId, alarmName, alarm) => {
