@@ -9,7 +9,7 @@ const htmlPlugin = new HtmlWebPackPlugin({
 module.exports = {
   mode: 'development',
   target: 'web',
-  entry: './src/popup.js',
+  entry: './src/index.js',
   module: {
     rules: [
       {
